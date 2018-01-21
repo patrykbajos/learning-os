@@ -1,4 +1,4 @@
-all: install_mbr install_second_stage
+all: backup_hdd install_mbr install_second_stage
 
 bin/mbr.bin: src/boot/mbr.asm
 	nasm -f bin src/boot/mbr.asm -o bin/mbr.bin
@@ -10,7 +10,7 @@ bin/second_stage.bin: src/boot/second_stage.asm
 	nasm -f bin src/boot/second_stage.asm -o bin/second_stage.bin
 
 install_second_stage: bin/second_stage.bin
-	dd if=bin/second_stage.bin bs=512 count=48 conv=notrunc seek=1 of=hdd.raw
+	dd if=bin/second_stage.bin bs=512 count=2 conv=notrunc seek=1 of=hdd.raw
 
 run:
 	qemu-system-i386 -hda hdd.raw
@@ -22,7 +22,10 @@ run_gdb:
 	gdb target remote localhost:1234
 
 backup_hdd:
-	cp hdd.raw .hdd.raw.old
+	cp hdd.raw .hdd.raw.bk
+
+rollback_hdd:
+	cp .hdd.raw.bk hdd.raw
 
 clear:
 	rm bin/*.bin

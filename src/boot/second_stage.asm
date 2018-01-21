@@ -1,16 +1,18 @@
 [BITS 16]
 [ORG 500h]
-; We have apx. 30 KB (30 464 byts) from 0x500 to 0x7BFF
-; but we will use only 24 KiB (24 * 1024 bytes)
+; Second Stage is placed in first two 512b sectors of EXT2 volume
+; After Second Stage is placed EXT2 1024b Superblock 
 
-jmp start
+%define SECOND_STAGE_SIZE 1024
+%define STACK_SIZE 64
 
-start:
+entry:
     mov si, after_load_msg
     call print_str
 
-    mov ax, stack ; Set stack pointer
-    add ax, 4095  ; Index 4095 is 4096th element
+    ; Set SP to the last element
+    mov ax, stack
+    add ax, STACK_SIZE-1
     mov sp, ax
    
     jmp $
@@ -36,7 +38,7 @@ after_load_msg db "Loaded second stage...", 0Ah, 0Dh, 00h
 data db 0, 0Ah, 0Dh, 0
 
 stack:
-    resb 4096 
+    resb 64 
 
-; Output size is 24 KiB (48 sectors)
-times 24576 - ($ - $$) db 0
+; Output size is 1024b (2 sectors)
+times SECOND_STAGE_SIZE - ($ - $$) db 0
