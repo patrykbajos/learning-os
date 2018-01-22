@@ -13,7 +13,7 @@ install_second_stage: bin/second_stage.bin
 	dd if=bin/second_stage.bin bs=512 count=2 conv=notrunc seek=1 of=hdd.raw
 
 bin/pmode_bootloader.elf: src/boot/pmode_bootloader.c
-	gcc -f elf -o pmode_bootloader.elf src/boot/pmode_bootloader.c
+	gcc -nodefaultlibs -nostdlib -nostartfiles src/boot/pmode_bootloader.c -o pmode_bootloader.elf
 
 bin/kernel.elf: src/kernel/kernel.c
 	gcc -f elf -o kernel.elf src/kernel/kernel.c
