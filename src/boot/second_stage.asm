@@ -38,7 +38,7 @@ after_load_msg db "Loaded second stage...", 0Ah, 0Dh, 00h
 data db 0, 0Ah, 0Dh, 0
 
 stack:
-    resb 64 
+    resb 64
 
 ; Output size is 1024b (2 sectors)
 times SECOND_STAGE_SIZE - ($ - $$) db 0
